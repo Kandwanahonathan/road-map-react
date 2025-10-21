@@ -6,3 +6,4 @@ function Portifolio() {
         </div>
     )
 }
+export default Portifolio
