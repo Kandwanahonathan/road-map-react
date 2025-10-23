@@ -8,6 +8,7 @@ import Home from './rooter/home'
 // import Contact from './rooter/contact'
 // import Portifolio from './rooter/portifolio'
 import Header from './2router/header'
+import Chat from './chat-deign/chat.design'
 function App() {
   
 
@@ -46,7 +47,9 @@ function App() {
 </Routes>
 
     </BrowserRouter> */}
+    <Chat/>
     </>
+    
   )
 }
 
