@@ -1,0 +1,16 @@
+.form-container{
+    width: 100%;
+    max-width: 400px;
+}
+.form-container input{
+    border-radius: 25px;
+    padding: 10px 15px;
+}
+.form-container button{
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center ;
+}
