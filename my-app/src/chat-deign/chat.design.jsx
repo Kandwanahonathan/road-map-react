@@ -1,68 +1,75 @@
-import React,{useState,useEffect} from "react";
-import { FaPaperPlane } from "react-icons/fa";
+import { data } from "autoprefixer";
+import React,{useState} from "react";
+import {FaPaperPlane} from 'react-icons/fa'
+ function Chat() {
 
-const Chat=()=>{
-    const [message,setMessage] =useState("");
-    const [messages,setMessages] = useState([]);
+    const [messages, setMessages]=useState([])
+    const [message,setMessage] =useState("")
 
-    const handleSend = (e)=>{
-        e.preventDefault()
-        if(message.trim() !== ""){
-            setMessages([...messages,message])
+    // React side
+const handleSend = async (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
 
-            setMessage("")
-        }
+    setMessages(prev => [...prev, { text: message, sender: "user" }]);
+    const userMessage = message;
+    setMessage("");
+
+    try {
+        const response = await fetch("/api/openai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage })
+        });
+        const data = await response.json();
+        setMessages(prev => [...prev, { text: data.reply, sender: "bot" }]);
+    } catch (err) {
+        console.log(err);
+        setMessages(prev => [...prev, { text: "Error getting reply", sender: "bot" }]);
     }
+};
 
     return(
-        
-        <div className="App text-center mt-2">
+        <div className="app justify-content-center align-items-center py-2" style={{minHeight:"100vh",border:"1px solid"}}>
             <center>
-            <div className="head mt-3  border rounded col-md-5  bg-dark" >
-                <h4 className="text-white fw-bold fst-italic">Live Chat</h4>
-                </div>
-               <div className="chat-box col-md-5 col-ms-10">
-             {/* message box */}
-                <div className="border rounded p-3 mb-3 shadow-m"
-                style={{
-                    height:"300px",
-                    backgroundColor:"#f8f9fa",
-                    overflowY:"auto",
-                }} >
-                    {messages.length===0 ?(
-                        <p className="text-muted text-center text-white border rounded" style={{height:"10vh", backgroundColor:"blue",border:"1px sold", width:"30%",position:"relative",left:"130px"}}>no ....message...yet</p>
-                    ):(
-                        messages.map((msg,index)=>(
-                            <div key={index} className="alert alert-success py-2 px-2 mb-2">
-                                {msg}
+         <div className=" bg-dark border rounded col-md-5">
+            <h4 className="text-white ">Live Chat</h4>
+         </div>
+         <div className="chat border rounded col-md-5 bg-light p-3 mb-3" style={{height:"300px",overflowY:"auto"}}>
+            {messages.length===0 ?(
+                <p>no..message..yet</p>
+            ):(
+                messages.map((msg,index)=>(
+                    <p key={index} className={msg.sender === "user" ? "bg-primary" : "bg-success"} style={{
+                        color:"white",
+                        padding:"8px 12px",
+                        borderRadius:"19px  0px 19px 0px",
+                        width:"fit-content",
+                        marginLeft:msg.sender === "user" ? "auto":"0",
+                        wordWrap:"break-word"
+                    }}>
+                        {msg.text}
+                    </p>
+                ))
+            )}
+         </div>
+         <div className="col-md-5">
+            <form  onSubmit={handleSend} action="" className="d-flex " style={{ gap:"10px"}}>
 
-                            </div>
-                        ))
-                    )}
-                </div>
-
-               </div>
-            <div className="col-md-5 col-sm-10">
-                <form onSubmit={handleSend} action="" className="d-flex align-items-center form-container ">
-                <input type="text" value={message} placeholder="!type your message ......" 
-                className="form-control me-2"
-
+                <input type="text" name="" id="" 
+                value={message}
                 onChange={(e)=>setMessage(e.target.value)}
-                
+                className="form-control"
                 />
-                
-                <button className="btn btn-success">
-                    <i className="bi bi-send-fill"></i>
-                </button>
-                </form>
-                
-            </div>
-             <p className="mt-3 ">message your are writing:....<strong>{message}</strong></p>
-            </center>
+                <button className="btn btn-success"><FaPaperPlane/></button>
 
 
+            </form>
+         </div>
 
+         </center>
         </div>
     )
-}
-export default Chat 
+    
+ }
+ export default Chat 
